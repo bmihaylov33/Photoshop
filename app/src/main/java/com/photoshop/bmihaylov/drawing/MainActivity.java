@@ -23,8 +23,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private float smallBrush, mediumBrush, largeBrush;
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         drawView = (DrawingView) findViewById(R.id.drawing);
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
             brushDialog.show();
         }
-        else if(view.getId()==R.id.erase_btn) {
+        else if(view.getId() == R.id.erase_btn) {
             //switch to erase - choose size
             final Dialog brushDialog = new Dialog(this);
             brushDialog.setTitle("Eraser size:");
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void onClick(View v) {
                     drawView.setErase(true);
                     drawView.setBrushSize(smallBrush);
-                    drawView.setErase(false);
+                    //drawView.setErase(false);
                     brushDialog.dismiss();
                 }
             });
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void onClick(View v) {
                     drawView.setErase(true);
                     drawView.setBrushSize(mediumBrush);
-                    drawView.setErase(false);
+                    //drawView.setErase(false);
                     brushDialog.dismiss();
                 }
             });
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void onClick(View v) {
                     drawView.setErase(true);
                     drawView.setBrushSize(largeBrush);
-                    drawView.setErase(false);
+                    //drawView.setErase(false);
                     brushDialog.dismiss();
                 }
             });
@@ -143,8 +143,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     dialog.dismiss();
                 }
             });
-            newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface dialog, int which){
+            newDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
                 }
             });
@@ -152,14 +152,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if(view.getId() == R.id.save_btn) {
             //save drawing
-
             drawView.setDrawingCacheEnabled(true);
+
+            AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
+            saveDialog.setTitle("Save drawing");
+            saveDialog.setMessage("Save drawing to device Gallery?");
+            saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    //save drawing
+                }
+            });
+            saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            saveDialog.show();
 
             String imgSaved = MediaStore.Images.Media.insertImage(
                     getContentResolver(), drawView.getDrawingCache(),
                     UUID.randomUUID().toString()+".png", "drawing");
 
-            if(imgSaved!=null){
+            if(imgSaved != null) {
                 Toast savedToast = Toast.makeText(getApplicationContext(),
                         "Drawing saved to Gallery!", Toast.LENGTH_SHORT);
                 savedToast.show();
@@ -170,27 +184,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 unsavedToast.show();
             }
             drawView.destroyDrawingCache();
-
-            AlertDialog.Builder saveDialog = new AlertDialog.Builder(this);
-            saveDialog.setTitle("Save drawing");
-            saveDialog.setMessage("Save drawing to device Gallery?");
-            saveDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface dialog, int which){
-                    //save drawing
-                }
-            });
-            saveDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){
-                public void onClick(DialogInterface dialog, int which){
-                    dialog.cancel();
-                }
-            });
-            saveDialog.show();
         }
     }
 
     public void paintClicked(View view) {
         //use chosen color
-        if(view != currPaint){
+        if(view != currPaint) {
             //update color
             ImageButton imgView = (ImageButton)view;
             String color = view.getTag().toString();
